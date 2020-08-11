@@ -1,48 +1,43 @@
 ﻿using GOT_Server.Contexts;
-using Microsoft.AspNetCore.Authentication;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace GOT_Server.Entities
 {
-    public class Archivo
+    public class Repositorie
     {
-        public string IDArchivo { get; set; }
-        public string DireccionArchivo { get; set; }
-        public string DataArchivo { get; set; }
-        public string NombreArchivo { get; set; }
+        public int IDRepositorie { get; set; }
+        public string NameRepositorie { get; set; }
 
         internal AppDb Db { get; set; }
 
-        public Archivo()
+        public Repositorie()
         {
         }
 
-        internal Archivo(AppDb db)
+        internal Repositorie(AppDb db)
         {
             Db = db;
         }
 
-
         public async Task InsertAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"INSERT INTO `Archivo` (`IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`) VALUES (@id, @dir, @data, @name);";
+            cmd.CommandText = @"INSERT INTO `Commited` (`IDRepositorie`, `NameRepositorie`) VALUES (@id, @name);";
             BindParams(cmd);
             BindId(cmd);
             await cmd.ExecuteNonQueryAsync();
-            //IDArchivo = ((int)cmd.LastInsertedId).ToString();
+            //IDCommit = ((int)cmd.LastInsertedId) + 1;
         }
 
         public async Task UpdateAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"UPDATE `Archivo` SET `DireccionArchivo` = @dir, `DataArchivo` = @data, `NombreArchivo` = @name WHERE `IDArchivo` = @id;";
+            cmd.CommandText = @"UPDATE `Repositorie` SET `NameRepositorie` = @name WHERE `IDRepositorie` = @id;";
             BindParams(cmd);
             BindId(cmd);
             await cmd.ExecuteNonQueryAsync();
@@ -51,7 +46,7 @@ namespace GOT_Server.Entities
         public async Task DeleteAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"DELETE FROM `Archivo` WHERE `IDArchivo` = @id;";
+            cmd.CommandText = @"DELETE FROM `Repositorie` WHERE `IDRepositorie` = @id;";
             BindId(cmd);
             await cmd.ExecuteNonQueryAsync();
         }
@@ -61,8 +56,8 @@ namespace GOT_Server.Entities
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@id",
-                DbType = DbType.String,
-                Value = IDArchivo,
+                DbType = DbType.Int32,
+                Value = IDRepositorie,
             });
         }
 
@@ -70,23 +65,10 @@ namespace GOT_Server.Entities
         {
             cmd.Parameters.Add(new MySqlParameter
             {
-                ParameterName = "@dir",
-                DbType = DbType.String,
-                Value = DireccionArchivo,
-            });
-            cmd.Parameters.Add(new MySqlParameter
-            {
-                ParameterName = "@data",
-                DbType = DbType.String,
-                Value = DataArchivo,
-            });
-            cmd.Parameters.Add(new MySqlParameter
-            {
                 ParameterName = "@name",
                 DbType = DbType.String,
-                Value = NombreArchivo,
+                Value = NameRepositorie,
             });
         }
-
     }
 }
