@@ -28,11 +28,11 @@ namespace GOT_Server.Entities
         public async Task InsertAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"INSERT INTO `Commited` (`IDCommit`, `MessageCommit`, `DateCommit`) VALUES (@id, @message, @date);";
-            BindParams(cmd);
-            BindId(cmd);   
+            cmd.CommandText = @"INSERT INTO `Commited` (`MessageCommit`, `DateCommit`) VALUES (@message, @date);";
+            BindParams(cmd); 
             await cmd.ExecuteNonQueryAsync();
-            //IDCommit = ((int)cmd.LastInsertedId) + 1;
+            DateCommit = DateTime.Now.AddDays(0);
+            IDCommit = ((int)cmd.LastInsertedId);
         }
 
         public async Task UpdateAsync()

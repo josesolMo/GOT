@@ -10,7 +10,7 @@ namespace GOT_Server.Entities
 {
     public class Repositorie
     {
-        public int IDRepositorie { get; set; }
+        public string IDRepositorie { get; set; }
         public string NameRepositorie { get; set; }
 
         internal AppDb Db { get; set; }
@@ -56,7 +56,7 @@ namespace GOT_Server.Entities
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@id",
-                DbType = DbType.Int32,
+                DbType = DbType.String,
                 Value = IDRepositorie,
             });
         }
