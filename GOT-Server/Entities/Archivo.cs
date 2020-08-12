@@ -12,10 +12,12 @@ namespace GOT_Server.Entities
 {
     public class Archivo
     {
-        public string IDArchivo { get; set; }
+        public int IDArchivo { get; set; }
         public string DireccionArchivo { get; set; }
         public string DataArchivo { get; set; }
         public string NombreArchivo { get; set; }
+        public int IDRepositorie { get; set; }
+        public string IDCommit { get; set; }
 
         internal AppDb Db { get; set; }
 
@@ -32,17 +34,16 @@ namespace GOT_Server.Entities
         public async Task InsertAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"INSERT INTO `Archivo` (`IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`) VALUES (@id, @dir, @data, @name);";
+            cmd.CommandText = @"INSERT INTO `Archivo` (`DireccionArchivo`, `NombreArchivo`, `DataArchivo`, `IDRepositorie`, `IDCommit`) VALUES (@dir, @name, @data, @idrepo, @idcommit);";
             BindParams(cmd);
-            BindId(cmd);
             await cmd.ExecuteNonQueryAsync();
-            //IDArchivo = ((int)cmd.LastInsertedId).ToString();
+            IDArchivo = ((int)cmd.LastInsertedId);
         }
 
         public async Task UpdateAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"UPDATE `Archivo` SET `DireccionArchivo` = @dir, `DataArchivo` = @data, `NombreArchivo` = @name WHERE `IDArchivo` = @id;";
+            cmd.CommandText = @"UPDATE `Archivo` SET `DireccionArchivo` = @dir,  `NombreArchivo` = @name, `DataArchivo` = @data, `IDRepositorie` = @idrepo, `IDCommit` = @idcommit WHERE `IDArchivo` = @id;";
             BindParams(cmd);
             BindId(cmd);
             await cmd.ExecuteNonQueryAsync();
@@ -85,6 +86,18 @@ namespace GOT_Server.Entities
                 ParameterName = "@name",
                 DbType = DbType.String,
                 Value = NombreArchivo,
+            });
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@idrepo",
+                DbType = DbType.Int32,
+                Value = IDRepositorie,
+            });
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@idcommit",
+                DbType = DbType.String,
+                Value = IDCommit,
             });
         }
 

@@ -32,7 +32,7 @@ namespace GOT_Server.Controllers
 
         // GET api/Archivo/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOne(string id)
+        public async Task<IActionResult> GetOne(int id)
         {
             await Db.Connection.OpenAsync();
             var query = new ArchivoQuery(Db);
@@ -54,7 +54,7 @@ namespace GOT_Server.Controllers
 
         // PUT api/Archivo/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOne(string id, [FromBody] Archivo body)
+        public async Task<IActionResult> PutOne(int id, [FromBody] Archivo body)
         {
             await Db.Connection.OpenAsync();
             var query = new ArchivoQuery(Db);
@@ -64,13 +64,15 @@ namespace GOT_Server.Controllers
             result.DireccionArchivo = body.DireccionArchivo;
             result.DataArchivo = body.DataArchivo;
             result.NombreArchivo = body.NombreArchivo;
+            result.IDRepositorie = body.IDRepositorie;
+            result.IDCommit = body.IDCommit;
             await result.UpdateAsync();
             return new OkObjectResult(result);
         }
 
         // DELETE api/Archivo/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOne(string id)
+        public async Task<IActionResult> DeleteOne(int id)
         {
             await Db.Connection.OpenAsync();
             var query = new ArchivoQuery(Db);

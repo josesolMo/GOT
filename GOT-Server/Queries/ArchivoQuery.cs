@@ -20,10 +20,10 @@ namespace GOT_Server.Queries
             Db = db;
         }
 
-        public async Task<Archivo> FindOneAsync(string id)
+        public async Task<Archivo> FindOneAsync(int id)
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo` FROM `Archivo` WHERE `IDArchivo` = @id";
+            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDRepositorie`, `IDCommit` FROM `Archivo` WHERE `IDArchivo` = @id";
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@id",
@@ -37,7 +37,7 @@ namespace GOT_Server.Queries
         public async Task<List<Archivo>> LatestPostsAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo` FROM `Archivo` ORDER BY `IDArchivo` DESC LIMIT 10;";
+            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDRepositorie`, `IDCommit` FROM `Archivo` ORDER BY `IDArchivo` DESC LIMIT 10;";
             return await ReadAllAsync(await cmd.ExecuteReaderAsync());
         }
 
@@ -59,10 +59,12 @@ namespace GOT_Server.Queries
                 {
                     var post = new Archivo(Db)
                     {
-                        IDArchivo = reader.GetString(0),
+                        IDArchivo = reader.GetInt32(0),
                         DireccionArchivo = reader.GetString(1),
                         DataArchivo = reader.GetString(2),
                         NombreArchivo = reader.GetString(3),
+                        IDRepositorie = reader.GetInt32(4),
+                        IDCommit = reader.GetString(5),
                     };
                     posts.Add(post);
                 }
