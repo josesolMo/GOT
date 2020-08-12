@@ -10,7 +10,7 @@ namespace GOT_Server.Entities
 {
     public class Repositorie
     {
-        public string IDRepositorie { get; set; }
+        public int IDRepositorie { get; set; }
         public string NameRepositorie { get; set; }
 
         internal AppDb Db { get; set; }
@@ -27,11 +27,10 @@ namespace GOT_Server.Entities
         public async Task InsertAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"INSERT INTO `Commited` (`IDRepositorie`, `NameRepositorie`) VALUES (@id, @name);";
+            cmd.CommandText = @"INSERT INTO `Repositorie` (`NameRepositorie`) VALUES (@name);";
             BindParams(cmd);
-            BindId(cmd);
             await cmd.ExecuteNonQueryAsync();
-            //IDCommit = ((int)cmd.LastInsertedId) + 1;
+            IDRepositorie = (int)cmd.LastInsertedId;
         }
 
         public async Task UpdateAsync()
@@ -56,7 +55,7 @@ namespace GOT_Server.Entities
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@id",
-                DbType = DbType.String,
+                DbType = DbType.Int32,
                 Value = IDRepositorie,
             });
         }

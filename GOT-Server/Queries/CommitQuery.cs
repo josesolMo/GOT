@@ -19,14 +19,14 @@ namespace GOT_Server.Queries
             Db = db;
         }
 
-        public async Task<Commited> FindOneAsync(int id)
+        public async Task<Commited> FindOneAsync(string id)
         {
             using var cmd = Db.Connection.CreateCommand();
             cmd.CommandText = @"SELECT `IDCommit`, `MessageCommit`, `DateCommit` FROM `Commited` WHERE `IDCommit` = @id";
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@id",
-                DbType = DbType.Int32,
+                DbType = DbType.String,
                 Value = id,
             });
             var result = await ReadAllAsync(await cmd.ExecuteReaderAsync());
@@ -58,7 +58,7 @@ namespace GOT_Server.Queries
                 {
                     var post = new Commited(Db)
                     {
-                        IDCommit = reader.GetInt32(0),
+                        IDCommit = reader.GetString(0),
                         MessageCommit = reader.GetString(1),
                         DateCommit = reader.GetDateTime(2),
                     };

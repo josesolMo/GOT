@@ -19,14 +19,14 @@ namespace GOT_Server.Queries
             Db = db;
         }
 
-        public async Task<Repositorie> FindOneAsync(string id)
+        public async Task<Repositorie> FindOneAsync(int id)
         {
             using var cmd = Db.Connection.CreateCommand();
             cmd.CommandText = @"SELECT `IDRepositorie`, `NameRepositorie` FROM `Repositorie` WHERE `IDRepositorie` = @id";
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@id",
-                DbType = DbType.String,
+                DbType = DbType.Int32,
                 Value = id,
             });
             var result = await ReadAllAsync(await cmd.ExecuteReaderAsync());
@@ -58,7 +58,7 @@ namespace GOT_Server.Queries
                 {
                     var post = new Repositorie(Db)
                     {
-                        IDRepositorie = reader.GetString(0),
+                        IDRepositorie = reader.GetInt32(0),
                         NameRepositorie = reader.GetString(1),
                     };
                     posts.Add(post);
