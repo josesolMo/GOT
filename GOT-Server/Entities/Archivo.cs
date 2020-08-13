@@ -10,11 +10,16 @@ using System.Threading.Tasks;
 
 namespace GOT_Server.Entities
 {
+    // Clase Archivo, estructura base de la tabla SQL
     public class Archivo
     {
+        //Contiene el Identificador único del archivo
         public int IDArchivo { get; set; }
+        //Contiene la dirección del archivo
         public string DireccionArchivo { get; set; }
+        //Contiene los datos internos del archivo
         public string DataArchivo { get; set; }
+        //Contiene Nombre del archivo
         public string NombreArchivo { get; set; }
         public int IDRepositorie { get; set; }
         public int IDCommit { get; set; }

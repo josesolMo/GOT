@@ -90,7 +90,7 @@ namespace GOT_Server.Queries
                 Value = file,
             });
 
-            return await ReadAllAsync(await cmd.ExecuteReaderAsync());
+            return await ReadAllAsync2(await cmd.ExecuteReaderAsync());
         }
 
         public async Task<List<Archivo>> LatestPostsAsync()
@@ -124,6 +124,26 @@ namespace GOT_Server.Queries
                         NombreArchivo = reader.GetString(3),
                         IDRepositorie = reader.GetInt32(4),
                         IDCommit = reader.GetInt32(5),
+                    };
+                    posts.Add(post);
+                }
+            }
+            return posts;
+        }
+
+        private async Task<List<Archivo>> ReadAllAsync2(DbDataReader reader)
+        {
+            var posts = new List<Archivo>();
+            using (reader)
+            {
+                while (await reader.ReadAsync())
+                {
+                    var post = new Archivo(Db)
+                    {
+                        DireccionArchivo = reader.GetString(0),
+                        DataArchivo = reader.GetString(1),
+                        NombreArchivo = reader.GetString(2),
+                        IDCommit = reader.GetInt32(3),
                     };
                     posts.Add(post);
                 }
