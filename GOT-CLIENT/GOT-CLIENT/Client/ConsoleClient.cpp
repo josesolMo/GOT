@@ -114,9 +114,6 @@ void ConsoleClient::ConsoleComand() {
 
 		if (comand == "got help") {
 			cout << "______________________________| Help |_________________________________ " << endl;
-			cout << "Help es el unico comando que funciona aun si el servidor  ""\n"
-				"no se encuentra activo. La siguiente es la lista de los""\n"
-				"commandos accesibles y su funcionalidad." << endl;
 			cout << "_______________________________________________________________________ " << endl;
 			cout << endl;
 			cout << "got init <name>:" "\n"
@@ -226,7 +223,6 @@ void ConsoleClient::ConsoleComand() {
 			while (temp != nullptr) {
 				string jsonfile = getFileJson(temp->dir, temp->name, temp->data, repID, commitID);
 
-				cout << jsonfile << endl;
 				auto a = cpr::Post(cpr::Url{ "https://localhost:44348/api/archivo" },
 					cpr::Body{ jsonfile },
 					cpr::Header{ { "Content-Type", "application/json" } });
@@ -241,7 +237,14 @@ void ConsoleClient::ConsoleComand() {
 			continue;
 		}
 
-		if (comand == "got status") {
+		if (comand.find("got status") != string::npos) {
+
+			string filename = getInLine(comand);
+
+			auto f = cpr::Get(cpr::Url{ "https://localhost:44348/api/archivo/all/"+repPath+"/"+ filename});
+			cout << endl;
+
+			decode(f.text);
 
 
 			cout << "Se recibio el siguiente comando: " << comand << endl;
@@ -321,8 +324,41 @@ void ConsoleClient::ConsoleComand() {
 			cout << "Se ha cambiado el archivo por el ultimo commit"<< endl;
 			continue;
 		}
-		if (comand == "got sync") {
-			cout << "Se recibio el siguiente comando: " << comand << endl;
+		if (comand.find("got sync") != string::npos) {
+
+			string filename = getInLine(comand);
+
+			auto f = cpr::Get(cpr::Url{ "https://localhost:44348/api/archivo/" + repPath + "/" + filename });
+			string searching = f.text;
+
+			if (searching.find("dataArchivo") != string::npos) {
+				struct json_object* tempjson;
+				json_object* parsedjson = json_tokener_parse((f.text).c_str());
+				json_object_object_get_ex(parsedjson, "dataArchivo", &tempjson);
+				string datafile = json_object_get_string(tempjson);
+				string datacompare = getFileData(repPath, filename);
+				if (datacompare == datafile) {
+					cout << "El archivo actual ya posee la ultima version";
+				}
+				else {
+					string option;
+					cout << "Como le gustaria generar el merge?" << endl;
+					cout << "Opcion numero 1: Ubicar primero informacion remota y seguida de esta ubicar informacion local" << endl;
+					cout << "Opcion numero 2: Ubicar primero informacion local y seguida de esta ubicar informacion remota" << endl;
+					cout << "Por favor digite el numero de la opcion deseada" << endl;
+					getline(cin, option);
+					string oldData = getFileData(repPath, filename);
+					clearFile(repPath, filename);
+					
+					if (option=="1") {
+						writeFile(repPath, filename, datafile  + "\n" + oldData);
+					}
+					else if (option == "2") {
+						writeFile(repPath, filename, oldData + "\n" + datafile);
+					}
+				}
+			}
+			cout << "Se ha realizado el merge correctamente"<< endl;
 			continue;
 		}
 		if (comand == "exit") {
@@ -409,7 +445,7 @@ string ConsoleClient::getFileJson(string direccion, string nombre, string data, 
 
 bool ConsoleClient::checkState(string repname, string filename){
 
-	std::cout << "Comparando Archivos" << std::endl;
+	//std::cout << "Comparando Archivos" << std::endl;
 
 	auto f = cpr::Get(cpr::Url{ "https://localhost:44348/api/archivo/" + repname + "/" + filename });
 	
@@ -463,6 +499,7 @@ bool ConsoleClient::findFiles(string directorio,string name){
 		return false;
 	}
 	int cont = 0;
+	std::cout << "Comparando Archivos" << std::endl;
 	while ((ent = readdir(dir)) != NULL)
 	{
 		if (name == "-A") {
@@ -496,3 +533,30 @@ bool ConsoleClient::findFiles(string directorio,string name){
 	return true;
 }
 
+void ConsoleClient::decode(string json){
+	
+
+	Json::CharReaderBuilder builder;
+	Json::CharReader* reader = builder.newCharReader();
+
+	Json::Value root;
+	string errors;
+
+	bool parsingSuccessful = reader->parse(json.c_str(), json.c_str() + json.size(), &root, &errors);
+	delete reader;
+
+	if (!parsingSuccessful)
+	{
+		cout << json << endl;
+		cout << errors << endl;
+	}
+
+	for (Json::Value::const_iterator outer = root.begin(); outer != root.end(); outer++)
+	{
+		for (Json::Value::const_iterator inner = (*outer).begin(); inner != (*outer).end(); inner++)
+		{
+			cout << inner.key() << ": " << *inner << endl;
+		}
+		cout << endl;
+	}
+}

@@ -81,6 +81,8 @@ public:
 
 	void writeFile(string repPath, string name, string data);
 
+	void decode(string json);
+
 private:
 	/**
 	* @brief ConsoleClient constructor de la clase
