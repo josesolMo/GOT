@@ -54,6 +54,30 @@ namespace GOT_Server.Controllers
             return new OkObjectResult(result);
         }
 
+        // GET api/Archivo/repo/file
+        [HttpGet("all/{idrepo}/{file}")]
+        public async Task<IActionResult> GetAllRepoFile(string idrepo, string file)
+        {
+            await Db.Connection.OpenAsync();
+            var query = new ArchivoQuery(Db);
+            var result = await query.FindAllRepoFile(idrepo, file);
+            if (result is null)
+                return new NotFoundResult();
+            return new OkObjectResult(result);
+        }
+
+        // GET api/Archivo/repo/file
+        [HttpGet("bycommit/{file}/{commit}")]
+        public async Task<IActionResult> GetAllRepoCommit(string file, int commit)
+        {
+            await Db.Connection.OpenAsync();
+            var query = new ArchivoQuery(Db);
+            var result = await query.FindFileCommit(file, commit);
+            if (result is null)
+                return new NotFoundResult();
+            return new OkObjectResult(result);
+        }
+
         // POST api/Archivo
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Archivo body)

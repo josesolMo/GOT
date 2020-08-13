@@ -53,6 +53,46 @@ namespace GOT_Server.Queries
             return result.Count > 0 ? result[0] : null;
         }
 
+        public async Task<Archivo> FindFileCommit(string file, int commit)
+        {
+            using var cmd = Db.Connection.CreateCommand();
+            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDRepositorie`, `IDCommit` FROM `Archivo` NATURAL JOIN `Repositorie` WHERE `NombreArchivo` = @file AND `IDCommit` = @commit;";
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@file",
+                DbType = DbType.String,
+                Value = file,
+            });
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@commit",
+                DbType = DbType.Int32,
+                Value = commit,
+            });
+            var result = await ReadAllAsync(await cmd.ExecuteReaderAsync());
+            return result.Count > 0 ? result[0] : null;
+        }
+
+        public async Task<List<Archivo>> FindAllRepoFile(string idrepo, string file)
+        {
+            using var cmd = Db.Connection.CreateCommand();
+            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDRepositorie`, `IDCommit` FROM `Archivo` NATURAL JOIN `Repositorie` WHERE `NameRepositorie` = @idrepo AND `NombreArchivo` = @name ORDER BY `IDCommit`;";
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@idrepo",
+                DbType = DbType.String,
+                Value = idrepo,
+            });
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@name",
+                DbType = DbType.String,
+                Value = file,
+            });
+
+            return await ReadAllAsync(await cmd.ExecuteReaderAsync());
+        }
+
         public async Task<List<Archivo>> LatestPostsAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
