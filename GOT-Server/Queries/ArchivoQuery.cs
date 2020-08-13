@@ -33,14 +33,14 @@ namespace GOT_Server.Queries
             var result = await ReadAllAsync(await cmd.ExecuteReaderAsync());
             return result.Count > 0 ? result[0] : null;
         }
-        public async Task<Archivo> FindRepoFile(int idrepo, string file)
+        public async Task<Archivo> FindRepoFile(string idrepo, string file)
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDRepositorie`, `IDCommit` FROM `Archivo` NATURAL JOIN `Repositorie` WHERE `IDRepositorie` = @idrepo AND `NombreArchivo` = @name ORDER BY `IDCommit` DESC;";
+            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDRepositorie`, `IDCommit` FROM `Archivo` NATURAL JOIN `Repositorie` WHERE `NameRepositorie` = @idrepo AND `NombreArchivo` = @name ORDER BY `IDCommit` DESC;";
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@idrepo",
-                DbType = DbType.Int32,
+                DbType = DbType.String,
                 Value = idrepo,
             });
             cmd.Parameters.Add(new MySqlParameter

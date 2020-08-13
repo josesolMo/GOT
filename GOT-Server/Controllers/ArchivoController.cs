@@ -44,7 +44,7 @@ namespace GOT_Server.Controllers
 
         // GET api/Archivo/repo/file
         [HttpGet("{idrepo}/{file}")]
-        public async Task<IActionResult> GetRepoFile(int idrepo, string file)
+        public async Task<IActionResult> GetRepoFile(string idrepo, string file)
         {
             await Db.Connection.OpenAsync();
             var query = new ArchivoQuery(Db);
