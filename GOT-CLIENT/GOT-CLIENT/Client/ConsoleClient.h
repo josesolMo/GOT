@@ -77,7 +77,9 @@ public:
 
 	string repPath;
 
-	void cleanFile(string rep, string name);
+	void clearFile(string rep, string name);
+
+	void writeFile(string repPath, string name, string data);
 
 private:
 	/**

@@ -249,8 +249,29 @@ void ConsoleClient::ConsoleComand() {
 			cout << "Se recibio el siguiente comando: " << comand << endl;
 			continue;
 		}
-		if (comand == "got reset") {
-			cout << "Se recibio el siguiente comando: " << comand << endl;
+		if (comand.find("got reset") != string::npos) {
+			
+			string filename = getInLine(comand);
+
+			auto f = cpr::Get(cpr::Url{ "https://localhost:44348/api/archivo/" + repPath + "/" + filename });
+
+			string searching = f.text;
+
+			if (searching.find("dataArchivo") != string::npos) {
+				struct json_object* tempjson;
+				json_object* parsedjson = json_tokener_parse((f.text).c_str());
+				json_object_object_get_ex(parsedjson, "dataArchivo", &tempjson);
+				string datafile = json_object_get_string(tempjson);
+				string datacompare = getFileData(repPath, filename);
+				if (datacompare == datafile) {
+					cout<<"El archivo actual ya posee la ultima version";
+				}
+				else {
+					clearFile(repPath, filename);
+					writeFile(repPath, filename,datafile);
+				}
+			}
+			cout << "Se ha cambiado el archivo por el ultimo commit"<< endl;
 			continue;
 		}
 		if (comand == "got sync") {
@@ -360,12 +381,20 @@ bool ConsoleClient::checkState(string repname, string filename){
 	return true;
 }
 
-void ConsoleClient::cleanFile(string rep, string name)
+void ConsoleClient::clearFile(string rep, string name)
 {
 	std::ofstream ofs;
 	string path = rep + "/" + name;
 	ofs.open(path, std::ofstream::out | std::ofstream::trunc);
 	ofs.close();
+}
+
+void ConsoleClient::writeFile(string repPath, string name, string data){
+	ofstream archivo;  // objeto de la clase ofstream
+
+	archivo.open(repPath + "/" + name);
+	archivo << data<< endl;
+	archivo.close();
 }
 
 

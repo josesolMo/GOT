@@ -52,5 +52,6 @@ public:
 	bool isInList(string directorio,string name);
 
 	void clearList();
+	
 };
 
