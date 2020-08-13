@@ -242,12 +242,59 @@ void ConsoleClient::ConsoleComand() {
 		}
 
 		if (comand == "got status") {
+
+
 			cout << "Se recibio el siguiente comando: " << comand << endl;
 			continue;
+
+
 		}
-		if (comand == "got rollback") {
-			cout << "Se recibio el siguiente comando: " << comand << endl;
+		if (comand.find("got rollback") != string::npos) {
+
+			string filename;
+			string ids;
+			int size = comand.size();
+			int i = 0;
+			int cont = 0;
+			while (i < size) {
+				if (cont > 0) {
+					if (comand.substr(i, 1) == " ") {
+						i++;
+						while (comand.substr(i, 1) != " ") {
+							filename += comand.substr(i, 1);
+							i++;
+						}
+						i++;
+						while (comand.substr(i, 1) != "") {
+							ids += comand.substr(i, 1);
+							i++;
+						}
+						break;
+					}
+
+				}
+				else if (comand.substr(i, 1) == " ") {
+					cont++;
+
+				}
+				i++;
+			}
+			stringstream toint(ids);
+			int id;
+			toint >> id;
+			auto f = cpr::Get(cpr::Url{ "https://localhost:44348/api/archivo/bycommit/"+filename+"/"+to_string(id)});
+			struct json_object* tempjson;
+			json_object* parsedjson = json_tokener_parse((f.text).c_str());
+			json_object_object_get_ex(parsedjson, "dataArchivo", &tempjson);
+			string datafile = json_object_get_string(tempjson);
+			
+			clearFile(repPath, filename);
+			writeFile(repPath, filename, datafile);
+
+			cout << "Se ha cambiado la data del archivo por el commit indicado"<< endl;
 			continue;
+
+
 		}
 		if (comand.find("got reset") != string::npos) {
 			
