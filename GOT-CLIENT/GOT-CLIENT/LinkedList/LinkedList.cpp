@@ -10,7 +10,7 @@ LinkedList::LinkedList()
 void LinkedList::addNode(string name, string directorio, string data){
 	Node* temp = new Node;
 	temp->data = data;
-	temp->dir = directorio + "/" + name;
+	temp->dir = directorio + "/";
 	temp->directorio = directorio;
 	temp->name = name;
 	if (head == nullptr) {
@@ -71,4 +71,16 @@ bool LinkedList::isInList(string directorio,string name) {
 	}
 	delete temp;
 	return false;
+}
+
+void LinkedList::clearList(){
+	Node* temp = head;
+	Node* next;
+	while (temp != nullptr) {
+		next = temp->next;
+		free(temp);
+		temp = next;
+	}
+	head = nullptr;
+	size = 0;
 }

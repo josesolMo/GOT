@@ -50,5 +50,7 @@ public:
 	* @param name indica el nombre del nodo que se quiere buscar
 	*/
 	bool isInList(string directorio,string name);
+
+	void clearList();
 };
 

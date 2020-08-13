@@ -18,6 +18,10 @@
 #include "../LinkedList/LinkedList.h"
 #include<cpr/cpr.h>
 #include "json-c/json.h"
+#include <ctime>
+#include <json/json.h>
+#include <json/value.h>
+
 
 
 #define MAXLIN 8000
@@ -66,7 +70,15 @@ public:
 	string getFileData(string directorio,string name);
 
 	string getFileJson(string direccion, string nombre, string data, int repID, int comID);
+
+	bool checkState(string repname,string filename);
 	
+	int repIdTemp;
+
+	string repPath;
+
+	void cleanFile(string rep, string name);
+
 private:
 	/**
 	* @brief ConsoleClient constructor de la clase

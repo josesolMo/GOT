@@ -18,7 +18,6 @@ ConsoleClient* ConsoleClient::getInstance() {
 
 void ConsoleClient::ConsoleComand() {
 	string comand;
-	string repPath;
 	cout << "Console Application" << endl;
 	cout << "Por favor Ingrese Comando Disponible" << endl;
 	cout << "-----------Comandos disponibles:-----------" << endl;
@@ -58,7 +57,7 @@ void ConsoleClient::ConsoleComand() {
 			struct json_object* tempjson;
 			json_object* parsedjson = json_tokener_parse((r.text).c_str());
 			json_object_object_get_ex(parsedjson, "idRepositorie", &tempjson);
-			int idtemp = json_object_get_int(tempjson);
+			int repID = json_object_get_int(tempjson);
 			cout << "Se ha creado la carpeta -> " + name + " <- exitosamente" << endl;
 
 
@@ -70,43 +69,111 @@ void ConsoleClient::ConsoleComand() {
 				cpr::Header{ { "Content-Type", "application/json" } });
 
 			struct json_object* tempjson2;
+			struct json_object* tempjson3;
 			json_object* parsedjson2 = json_tokener_parse((c.text).c_str());
 			json_object_object_get_ex(parsedjson2, "idCommit", &tempjson2);
-			int idtemp2 = json_object_get_int(tempjson2);
+			json_object_object_get_ex(parsedjson2, "dateCommit", &tempjson3);
+			int commitID = json_object_get_int(tempjson2);
+			string date = json_object_get_string(tempjson3);
 
-			std::cout << "Commit ID: " << idtemp2 << std::endl;
+			std::cout << "Commit ID: " << commitID << std::endl;
+			cout << "Fecha del commit: " << date << endl;
 			cout << "COMMIT LISTO" << endl;
 			
 
 			//REALIZA POST DEL ARCHIVO Y LE ASIGNA ID DEL COMMIT Y DEL REPOSITORIO AL QUE PERTENECE
-			string filedir = name + "/.gotignore.txt";
-			string jsonfile = getFileJson(filedir,".gotignore.txt","",idtemp,idtemp2);
+			string filedir = name+"/";
+			cout << name << endl;
+			string jsonfile = getFileJson(filedir,".gotignore.txt","",repID,commitID);
+
 			cout << jsonfile << endl;
 			auto a = cpr::Post(cpr::Url{ "https://localhost:44348/api/archivo" },
 				cpr::Body{ jsonfile },
 				cpr::Header{ { "Content-Type", "application/json" } });
+
 			cout << "Se ha subido el commit con el archivo correspondiente" << endl;
 
 
 			/*
 			std::cout << "Obteniendo datos..." << std::endl;
-			auto r = cpr::Get(cpr::Url{ "https://localhost:44348/api/repositorie" });
-			std::cout << "Respuesta: " << r.text << std::endl;
+			auto f = cpr::Get(cpr::Url{ "https://localhost:44348/api/archivo" });
+			cout<<f.text<<endl;
 			*/
 
 			ofstream file;
 			file.open(name + "/.gotignore.txt");
-			file << "ignorarEjemplo";//se escribe lo que se quiere ignorar
+			//file << "ignorarEjemplo";//se escribe lo que se quiere ignorar
 			file.close();
 
 
 			repPath = name;
+			//repIdTemp = repID;
 			continue;
 		}
 
 
 		if (comand == "got help") {
-			cout << "Se recibio el siguiente comando: " << comand << endl;
+			cout << "______________________________| Help |_________________________________ " << endl;
+			cout << "Help es el unico comando que funciona aun si el servidor  ""\n"
+				"no se encuentra activo. La siguiente es la lista de los""\n"
+				"commandos accesibles y su funcionalidad." << endl;
+			cout << "_______________________________________________________________________ " << endl;
+			cout << endl;
+			cout << "got init <name>:" "\n"
+				"	Instancia un nuevo repositorio en el servidor y lo identifica"  "\n"
+				"	con el nombre indicado por <name>. Ademas, crea cualquier estructura" "\n"
+				"	de datos necesaria para llevar el control del lado del cliente" "\n"
+				"	sobre cuales archivos estan siendo controlados por el servidor""\n"
+				"	y cuales no. Debe crear un archivo llamado .gotignore que permite""\n"
+				"	especificar cuales archivos son ignorados por el control de ""\n"
+				"	versiones.El servidor almacena esta informacion tambien." << endl;
+			cout << "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ " << endl;
+			cout << endl;
+			cout << "got add [-A] [name]:" "\n"
+				"	Permite agregar todos los archivos que no esten registrados""\n"
+				"	o que tengan nuevos cambios al repositorio. Ignora los archivos""\n"
+				"	que esten configurados en .gotignore. El usuario puede indicar""\n"
+				"	cada archivo por agregar, o puede usar el flag -A para agregar""\n"
+				"	todos los archivos relevantes. Cuando los archivos se agregan,""\n"
+				"	se marcan como pendientes de commit." << endl;
+			cout << "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ " << endl;
+			cout << endl;
+			cout << "got commit <mensaje>:""\n"
+				"	Envia los archivos agregados y pendientes de commit al ""\n"
+				"	servidor. Se debe especificar un mensaje a la hora de hacer""\n"
+				"	el commit.El server recibe los cambios, y cuando ha terminado""\n"
+				"	de procesar los cambios, retorna un id	de commit al cliente""\n"
+				"	generado con MD5.""\n"
+				"\n"
+				"	El server debe verificar que el commit del cliente esté al día""\n"
+				"	con el resto de cambios realizados por otros usuarios. En caso""\n"
+				"	de que no sea asi, rechaza el commit. " << endl;
+			cout << "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ " << endl;
+			cout << endl;
+			cout << "got status <file>:" "\n"
+				"	Este comando nos va a mostrar cuales archivos han sido""\n"
+				"	cambiados, agregados o eliminados de acuerdo con el commit""\n"
+				"	anterior. Si el usuario especifica <file>, muestra el historial""\n"
+				"	de cambios, recuperando el historial de	cambios desde el servidor" << endl;
+			cout << "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ " << endl;
+			cout << endl;
+			cout << "got rollback <file> <commit>:""\n"
+				"	Permite regresar un archivo en el tiempo a un commit ""\n"
+				"	especifico. Para esto, se comunica al servidor y recupera""\n"
+				"	el archivo hasta dicha version" << endl;
+			cout << "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ " << endl;
+			cout << endl;
+			cout << "got reset <file>:""\n"
+				"	Deshace cambios locales para un archivo y lo regresa al ultimo commit." << endl;
+			cout << "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ " << endl;
+			cout << endl;
+			cout << "got sync <file>:""\n"
+				"	Recupera los cambios para un archivo en el servidor y""\n"
+				"	lo sincroniza con el archivo en el cliente. Si hay cambios""\n"
+				"	locales, debe permitirle de alguna forma, que el usuario ""\n"
+				"	haga merge de los cambios interactivamente" << endl;
+			cout << "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ " << endl;
+			cout << "_______________________________________________________________________ " << endl;
 			continue;
 		}
 
@@ -117,15 +184,60 @@ void ConsoleClient::ConsoleComand() {
 			if (!findFiles(repPath, name)) {
 				cout << "El archivo ya ha sido agregado anteriormente o no existe, intente de nuevo correctamente" << endl;
 				continue;
+			} 
+			if (directorioArchivos.size > 0) {
+				cout << "Archivos listos para commit" << endl;
 			}
+
 			continue;
+
 		}
 
 		if (comand.find("got commit") != string::npos) {
+
+
 			string message = getInLine(comand);
+			string jsoncom = "{\"MessageCommit\":\""+message+"\",\"DateCommit\":\"2020-08-13T20:46:05.1468152-06:00\"}";
+
+			auto c = cpr::Post(cpr::Url{ "https://localhost:44348/api/commited" },
+				cpr::Body{ jsoncom },
+				cpr::Header{ { "Content-Type", "application/json" } });
+
+			struct json_object* tempjson2;
+			struct json_object* tempjson3;
+			json_object* parsedjson2 = json_tokener_parse((c.text).c_str());
+			json_object_object_get_ex(parsedjson2, "idCommit", &tempjson2);
+			json_object_object_get_ex(parsedjson2, "dateCommit", &tempjson3);
+			int commitID = json_object_get_int(tempjson2);
+			string date = json_object_get_string(tempjson3);
+
+			std::cout << "Commit ID: " << commitID << std::endl;
+			cout << "Fecha del commit: " << date << endl;
+			
+			auto rep = cpr::Get(cpr::Url{ "https://localhost:44348/api/repositorie/byname/" + repPath });
+
+			struct json_object* repo;
+			json_object* repositorie = json_tokener_parse((rep.text).c_str());
+			json_object_object_get_ex(repositorie, "idRepositorie", &repo);
+			int repID = json_object_get_int(repo);
+
+
+			Node* temp = directorioArchivos.head;
+			while (temp != nullptr) {
+				string jsonfile = getFileJson(temp->dir, temp->name, temp->data, repID, commitID);
+
+				cout << jsonfile << endl;
+				auto a = cpr::Post(cpr::Url{ "https://localhost:44348/api/archivo" },
+					cpr::Body{ jsonfile },
+					cpr::Header{ { "Content-Type", "application/json" } });
+
+				temp = temp->next;
+			}
 			cout << "Para el directorio " + repPath + " se ha realizado correctamente el commit de los siguientes archivos: " << endl;
 			directorioArchivos.display(repPath);
 			cout << "Commit: " + message << endl;
+
+			directorioArchivos.clearList();
 			continue;
 		}
 
@@ -189,7 +301,7 @@ string ConsoleClient::getFileData(string directorio,string name){
 	char linea[MAXLIN];
 	archivo = fopen((directorio + "/"+ name).c_str(), "rb");
 	if (archivo == NULL) {
-		cout << "ERROR AL LEER O ENCONTRAR ARCHIVO, VUELVA A INTENTAR DE MANERA CORRECTA" << endl;
+		cout << "ERROR AL LEER O ENCONTRAR ARCHIVO, VUEgotLVA A INTENTAR DE MANERA CORRECTA" << endl;
 		return "";
 	}
 	int cont = 1;
@@ -227,6 +339,35 @@ string ConsoleClient::getFileJson(string direccion, string nombre, string data, 
 	return json_object_to_json_string(jobjArchivo);
 }
 
+bool ConsoleClient::checkState(string repname, string filename){
+
+	std::cout << "Comparando Archivos" << std::endl;
+
+	auto f = cpr::Get(cpr::Url{ "https://localhost:44348/api/archivo/" + repname + "/" + filename });
+	
+	string searching = f.text;
+
+	if (searching.find("dataArchivo") != string::npos) {
+		struct json_object* tempjson;
+		json_object* parsedjson = json_tokener_parse((f.text).c_str());
+		json_object_object_get_ex(parsedjson, "dataArchivo", &tempjson);
+		string datafile = json_object_get_string(tempjson);
+		string datacompare = getFileData(repname, filename);
+		if (datacompare == datafile) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void ConsoleClient::cleanFile(string rep, string name)
+{
+	std::ofstream ofs;
+	string path = rep + "/" + name;
+	ofs.open(path, std::ofstream::out | std::ofstream::trunc);
+	ofs.close();
+}
+
 
 void run() {
 	ConsoleClient* client = ConsoleClient::getInstance();
@@ -252,9 +393,8 @@ bool ConsoleClient::findFiles(string directorio,string name){
 			if ((strcmp(ent->d_name, directorio.c_str()) != 0) && (strcmp(ent->d_name, "..") != 0) && (strcmp(ent->d_name, ".") != 0)) {
 				string names = ent->d_name;
 				string data = getFileData(directorio, names);
-				if (!directorioArchivos.isInList(directorio, names) && data != "") {
+				if (data != "" && checkState(directorio,names)==true) {
 					directorioArchivos.addNode(names, directorio, data);
-					cout << "ARCHIVO -> " + names + " <- AGREGADO CORRECTAMENTE,LISTO PARA COMMIT" << endl;
 					cont = 1;
 				}
 			}
@@ -263,11 +403,10 @@ bool ConsoleClient::findFiles(string directorio,string name){
 			if ((strcmp(ent->d_name, directorio.c_str()) != 0) && (strcmp(ent->d_name, "..") != 0) && (strcmp(ent->d_name, ".") != 0)) {
 				if (ent->d_name == name) {
 					string data = getFileData(directorio, name);
-					if (!directorioArchivos.isInList(directorio, name) && data != "") {
+					if ( data != "" && checkState(directorio, name) == true) {
 						directorioArchivos.addNode(name, directorio, data);
-						cout << "ARCHIVO -> " + name + " <- AGREGADO CORRECTAMENTE, LISTO PARA COMMIT" << endl;
-						break;
 						cont = 1;
+						break;
 					}
 				}
 			}
