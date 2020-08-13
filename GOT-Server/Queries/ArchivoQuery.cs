@@ -56,7 +56,7 @@ namespace GOT_Server.Queries
         public async Task<Archivo> FindFileCommit(string file, int commit)
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDRepositorie`, `IDCommit` FROM `Archivo` NATURAL JOIN `Repositorie` WHERE `NombreArchivo` = @file AND `IDCommit` = @commit;";
+            cmd.CommandText = @"SELECT  `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDCommit` FROM `Archivo` NATURAL JOIN `Repositorie` WHERE `NombreArchivo` = @file AND `IDCommit` = @commit;";
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@file",
