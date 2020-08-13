@@ -23,11 +23,11 @@ DROP TABLE IF EXISTS `archivo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `archivo` (
-  `IDArchivo` int NOT NULL,
+  `IDArchivo` int NOT NULL AUTO_INCREMENT,
   `DireccionArchivo` varchar(20) DEFAULT NULL,
   `NombreArchivo` varchar(20) NOT NULL,
   `DataArchivo` text,
-  `IDRepositorie` varchar(32) DEFAULT NULL,
+  `IDRepositorie` int DEFAULT NULL,
   `IDCommit` int DEFAULT NULL,
   PRIMARY KEY (`IDArchivo`),
   KEY `FK_Archivo_Repositorie` (`IDRepositorie`),
@@ -54,7 +54,7 @@ DROP TABLE IF EXISTS `commited`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `commited` (
-  `IDCommit` int NOT NULL,
+  `IDCommit` int NOT NULL AUTO_INCREMENT,
   `MessageCommit` varchar(20) NOT NULL,
   `DateCommit` datetime DEFAULT NULL,
   PRIMARY KEY (`IDCommit`)
@@ -78,7 +78,7 @@ DROP TABLE IF EXISTS `repositorie`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `repositorie` (
-  `IDRepositorie` varchar(32) NOT NULL,
+  `IDRepositorie` int NOT NULL AUTO_INCREMENT,
   `NameRepositorie` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`IDRepositorie`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -102,4 +102,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-08-10 23:08:00
+-- Dump completed on 2020-08-13  7:21:02
