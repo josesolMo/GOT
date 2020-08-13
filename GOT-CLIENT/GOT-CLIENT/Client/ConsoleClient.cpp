@@ -47,6 +47,7 @@ void ConsoleClient::ConsoleComand() {
 				continue;
 			}
 			
+			//REALIZA POST DEL REPOSITORIO Y OBTIENE EL ID DE ESTE
 			string json = "{\"NameRepositorie\":\""+name+"\"}";
 
 			std::cout << "Action: Post Archivo" << std::endl;
@@ -54,7 +55,38 @@ void ConsoleClient::ConsoleComand() {
 				cpr::Body{ json },
 				cpr::Header{ { "Content-Type", "application/json" } });
 
+			struct json_object* tempjson;
+			json_object* parsedjson = json_tokener_parse((r.text).c_str());
+			json_object_object_get_ex(parsedjson, "idRepositorie", &tempjson);
+			int idtemp = json_object_get_int(tempjson);
 			cout << "Se ha creado la carpeta -> " + name + " <- exitosamente" << endl;
+
+
+			//REALIZA POST DEL COMMIT Y OBTIENE EL ID DE ESTE
+			string jsoncom = "{\"MessageCommit\":\"Agrega GotIgnore\",\"DateCommit\":\"2020-08-13T20:46:05.1468152-06:00\"}";
+
+			auto c = cpr::Post(cpr::Url{ "https://localhost:44348/api/commited" },
+				cpr::Body{ jsoncom },
+				cpr::Header{ { "Content-Type", "application/json" } });
+
+			struct json_object* tempjson2;
+			json_object* parsedjson2 = json_tokener_parse((c.text).c_str());
+			json_object_object_get_ex(parsedjson2, "idCommit", &tempjson2);
+			int idtemp2 = json_object_get_int(tempjson2);
+
+			std::cout << "Commit ID: " << idtemp2 << std::endl;
+			cout << "COMMIT LISTO" << endl;
+			
+
+			//REALIZA POST DEL ARCHIVO Y LE ASIGNA ID DEL COMMIT Y DEL REPOSITORIO AL QUE PERTENECE
+			string filedir = name + "/.gotignore.txt";
+			string jsonfile = getFileJson(filedir,".gotignore.txt","",idtemp,idtemp2);
+			cout << jsonfile << endl;
+			auto a = cpr::Post(cpr::Url{ "https://localhost:44348/api/archivo" },
+				cpr::Body{ jsonfile },
+				cpr::Header{ { "Content-Type", "application/json" } });
+			cout << "Se ha subido el commit con el archivo correspondiente" << endl;
+
 
 			/*
 			std::cout << "Obteniendo datos..." << std::endl;
@@ -167,6 +199,34 @@ string ConsoleClient::getFileData(string directorio,string name){
 	fclose(archivo);
 	return data;
 }
+
+string ConsoleClient::getFileJson(string direccion, string nombre, string data, int repID, int comID)
+{
+	json_object* jobjArchivo = json_object_new_object();
+	
+	json_object* jdir = json_object_new_string(direccion.c_str());
+	
+	json_object* jname = json_object_new_string(nombre.c_str());
+	
+	json_object* jdata = json_object_new_string(data.c_str());
+	
+	json_object* jidrepo = json_object_new_int(repID);
+
+	json_object* jidcom = json_object_new_int(comID);
+	
+	json_object_object_add(jobjArchivo, "DireccionArchivo", jdir);
+	
+	json_object_object_add(jobjArchivo, "NombreArchivo", jname);
+
+	json_object_object_add(jobjArchivo, "DataArchivo", jdata);
+	
+	json_object_object_add(jobjArchivo, "IDRepositorie", jidrepo);
+
+	json_object_object_add(jobjArchivo, "IDCommit", jidcom);
+	
+	return json_object_to_json_string(jobjArchivo);
+}
+
 
 void run() {
 	ConsoleClient* client = ConsoleClient::getInstance();

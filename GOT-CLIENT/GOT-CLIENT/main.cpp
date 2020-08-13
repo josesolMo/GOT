@@ -7,10 +7,13 @@ using namespace std;
 
 int main() {
 	
+	
 	ConsoleClient* client = ConsoleClient::getInstance();
 	client->thrd.join();
 	return 0;
 	
+	
+
 	/*
 	{
 		std::cout << "Obteniendo datos..." << std::endl;
