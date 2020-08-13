@@ -42,7 +42,7 @@ namespace GOT_Server.Controllers
         }
 
         // GET api/Commited/5
-        [HttpGet("{name}")]
+        [HttpGet("byname/{name}")]
         public async Task<IActionResult> GetID(string name)
         {
             await Db.Connection.OpenAsync();
