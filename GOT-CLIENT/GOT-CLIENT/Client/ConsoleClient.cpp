@@ -35,19 +35,39 @@ void ConsoleClient::ConsoleComand() {
 	while (true) {
 		cout << ">> ";
 		getline(cin, comand);
+
+
 		if (comand.find("got init") != string::npos) {
 			string name = getInLine(comand);
 			bool successful = _mkdir(name.c_str());
+
 			if (successful) {
 				repPath = name;
 				cout << "La carpeta ya existe, ha ingresado a la siguiente carpeta " << name << endl;
 				continue;
 			}
+			
+			string json = "{\"NameRepositorie\":\""+name+"\"}";
+
+			std::cout << "Action: Post Archivo" << std::endl;
+			auto r = cpr::Post(cpr::Url{ "https://localhost:44348/api/repositorie" },
+				cpr::Body{ json },
+				cpr::Header{ { "Content-Type", "application/json" } });
+
+			cout << "Se ha creado la carpeta -> " + name + " <- exitosamente" << endl;
+
+			/*
+			std::cout << "Obteniendo datos..." << std::endl;
+			auto r = cpr::Get(cpr::Url{ "https://localhost:44348/api/repositorie" });
+			std::cout << "Respuesta: " << r.text << std::endl;
+			*/
+
 			ofstream file;
 			file.open(name + "/.gotignore.txt");
 			file << "ignorarEjemplo";//se escribe lo que se quiere ignorar
 			file.close();
-			cout << "Se ha creado la carpeta -> " + name + " <- exitosamente" << endl;
+
+
 			repPath = name;
 			continue;
 		}
@@ -68,7 +88,6 @@ void ConsoleClient::ConsoleComand() {
 			}
 			continue;
 		}
-
 
 		if (comand.find("got commit") != string::npos) {
 			string message = getInLine(comand);
@@ -110,14 +129,22 @@ string ConsoleClient::getInLine(string comand){
 	string line;
 	int size = comand.size();
 	int i = 0;
+	int cont = 0;
 	while (i < size) {
-		if (comand.substr(i, 1) == "<") {
-			i++;
-			while (comand.substr(i, 1) != ">") {
-				line += comand.substr(i, 1);
+		if (cont > 0) {
+			if (comand.substr(i, 1) == " ") {
 				i++;
+				while (comand.substr(i, 1) != "") {
+					line += comand.substr(i, 1);
+					i++;
+				}
+				break;
 			}
-			break;
+			
+		}
+		else if (comand.substr(i, 1) == " ") {
+			cont++;
+			
 		}
 		i++;
 	}

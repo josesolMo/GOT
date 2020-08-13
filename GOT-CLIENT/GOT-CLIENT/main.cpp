@@ -28,6 +28,16 @@ int main() {
 		std::cout << "Returned Status:" << r.status_code << std::endl;
 	}
 	*/
+
+	/*
+			std::cout << "Action: Post Archivo" << std::endl;
+			auto r = cpr::Post(cpr::Url{ "https://localhost:44348/api/repositorie" },
+				cpr::Body{ R"({"IDRepositorie":"56",
+		   "NameRepositorie":"JOSEMIERDA"})" },
+				cpr::Header{ { "Content-Type", "application/json" } });
+			cout << "Se ha creado la carpeta -> " + name + " <- exitosamente" << endl;
+			*/
+
 	/*
 	FILE* archivo;
 	string mensaje = "";

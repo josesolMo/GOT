@@ -10,15 +10,14 @@
 #include <iostream>
 #include <thread>
 #include <string>
-#include <cstdio>
-#include <cstdlib>
+//#include <cstdio>
+//#include <cstdlib>
 #include <direct.h>
 #include <fstream>
-#include <vector>
-#include <string>
-#include <iostream>
 #include "../../../../dirent-master/include/dirent.h"
 #include "../LinkedList/LinkedList.h"
+#include<cpr/cpr.h>
+
 
 #define MAXLIN 8000
 
