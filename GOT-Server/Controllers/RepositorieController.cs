@@ -41,6 +41,18 @@ namespace GOT_Server.Controllers
             return new OkObjectResult(result);
         }
 
+        // GET api/Commited/5
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetID(string name)
+        {
+            await Db.Connection.OpenAsync();
+            var query = new RepositorieQuery(Db);
+            var result = await query.FindID(name);
+            if (result is null)
+                return new NotFoundResult();
+            return new OkObjectResult(result);
+        }
+
         // POST api/Commited
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Repositorie body)

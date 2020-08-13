@@ -33,6 +33,20 @@ namespace GOT_Server.Queries
             return result.Count > 0 ? result[0] : null;
         }
 
+        public async Task<Repositorie> FindID(string name)
+        {
+            using var cmd = Db.Connection.CreateCommand();
+            cmd.CommandText = @"SELECT `IDRepositorie`, `NameRepositorie` FROM `Repositorie` WHERE `NameRepositorie` = @name";
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@name",
+                DbType = DbType.String,
+                Value = name,
+            });
+            var result = await ReadAllAsync(await cmd.ExecuteReaderAsync());
+            return result.Count > 0 ? result[0] : null;
+        }
+
         public async Task<List<Repositorie>> LatestPostsAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
