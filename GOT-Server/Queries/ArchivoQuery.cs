@@ -64,7 +64,7 @@ namespace GOT_Server.Queries
                         DataArchivo = reader.GetString(2),
                         NombreArchivo = reader.GetString(3),
                         IDRepositorie = reader.GetInt32(4),
-                        IDCommit = reader.GetString(5),
+                        IDCommit = reader.GetInt32(5),
                     };
                     posts.Add(post);
                 }

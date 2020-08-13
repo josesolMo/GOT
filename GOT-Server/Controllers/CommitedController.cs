@@ -30,7 +30,7 @@ namespace GOT_Server.Controllers
 
         // GET api/Commited/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOne(string id)
+        public async Task<IActionResult> GetOne(int id)
         {
             await Db.Connection.OpenAsync();
             var query = new CommitQuery(Db);
@@ -52,7 +52,7 @@ namespace GOT_Server.Controllers
 
         // PUT api/Commited/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOne(string id, [FromBody] Commited body)
+        public async Task<IActionResult> PutOne(int id, [FromBody] Commited body)
         {
             await Db.Connection.OpenAsync();
             var query = new CommitQuery(Db);
@@ -67,7 +67,7 @@ namespace GOT_Server.Controllers
 
         // DELETE api/Commited/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOne(string id)
+        public async Task<IActionResult> DeleteOne(int id)
         {
             await Db.Connection.OpenAsync();
             var query = new CommitQuery(Db);

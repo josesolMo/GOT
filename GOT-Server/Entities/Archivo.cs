@@ -17,7 +17,7 @@ namespace GOT_Server.Entities
         public string DataArchivo { get; set; }
         public string NombreArchivo { get; set; }
         public int IDRepositorie { get; set; }
-        public string IDCommit { get; set; }
+        public int IDCommit { get; set; }
 
         internal AppDb Db { get; set; }
 
@@ -96,7 +96,7 @@ namespace GOT_Server.Entities
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@idcommit",
-                DbType = DbType.String,
+                DbType = DbType.Int32,
                 Value = IDCommit,
             });
         }

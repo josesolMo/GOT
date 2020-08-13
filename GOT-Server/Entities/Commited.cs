@@ -10,7 +10,7 @@ namespace GOT_Server.Entities
 {
     public class Commited
     {
-        public string IDCommit { get; set; }
+        public int IDCommit { get; set; }
         public string MessageCommit { get; set; }
         public DateTime DateCommit { get; set; }
 
@@ -30,10 +30,9 @@ namespace GOT_Server.Entities
             using var cmd = Db.Connection.CreateCommand();
             cmd.CommandText = @"INSERT INTO `Commited` (`IDCommit`, `MessageCommit`, `DateCommit`) VALUES (@id, @message, @date);";
             BindParams(cmd);
-            BindId(cmd);
             await cmd.ExecuteNonQueryAsync();
             DateCommit = DateTime.Now.AddDays(0);
-            //IDCommit = ((int)cmd.LastInsertedId);
+            IDCommit = ((int)cmd.LastInsertedId);
         }
 
         public async Task UpdateAsync()
@@ -58,7 +57,7 @@ namespace GOT_Server.Entities
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@id",
-                DbType = DbType.String,
+                DbType = DbType.Int32,
                 Value = IDCommit,
             });
         }
