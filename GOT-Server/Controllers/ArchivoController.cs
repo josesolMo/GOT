@@ -42,6 +42,18 @@ namespace GOT_Server.Controllers
             return new OkObjectResult(result);
         }
 
+        // GET api/Archivo/repo/file
+        [HttpGet("{idrepo}/{file}")]
+        public async Task<IActionResult> GetRepoFile(int idrepo, string file)
+        {
+            await Db.Connection.OpenAsync();
+            var query = new ArchivoQuery(Db);
+            var result = await query.FindRepoFile(idrepo, file);
+            if (result is null)
+                return new NotFoundResult();
+            return new OkObjectResult(result);
+        }
+
         // POST api/Archivo
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Archivo body)

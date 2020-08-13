@@ -36,7 +36,7 @@ namespace GOT_Server.Queries
         public async Task<List<Repositorie>> LatestPostsAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"SELECT `IDRepositorie`, `NameRepositorie` FROM `Repositorie` ORDER BY `IDRepositorie` DESC LIMIT 10;";
+            cmd.CommandText = @"SELECT `IDRepositorie`, `NameRepositorie` FROM `Repositorie` ORDER BY `IDRepositorie` DESC;";
             return await ReadAllAsync(await cmd.ExecuteReaderAsync());
         }
 

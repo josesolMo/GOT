@@ -27,8 +27,27 @@ namespace GOT_Server.Queries
             cmd.Parameters.Add(new MySqlParameter
             {
                 ParameterName = "@id",
-                DbType = DbType.String,
+                DbType = DbType.Int32,
                 Value = id,
+            });
+            var result = await ReadAllAsync(await cmd.ExecuteReaderAsync());
+            return result.Count > 0 ? result[0] : null;
+        }
+        public async Task<Archivo> FindRepoFile(int idrepo, string file)
+        {
+            using var cmd = Db.Connection.CreateCommand();
+            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDRepositorie`, `IDCommit` FROM `Archivo` NATURAL JOIN `Repositorie` WHERE `IDRepositorie` = @idrepo AND `NombreArchivo` = @name ORDER BY `IDCommit` DESC;";
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@idrepo",
+                DbType = DbType.Int32,
+                Value = idrepo,
+            });
+            cmd.Parameters.Add(new MySqlParameter
+            {
+                ParameterName = "@name",
+                DbType = DbType.String,
+                Value = file,
             });
             var result = await ReadAllAsync(await cmd.ExecuteReaderAsync());
             return result.Count > 0 ? result[0] : null;
@@ -37,7 +56,7 @@ namespace GOT_Server.Queries
         public async Task<List<Archivo>> LatestPostsAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDRepositorie`, `IDCommit` FROM `Archivo` ORDER BY `IDArchivo` DESC LIMIT 10;";
+            cmd.CommandText = @"SELECT `IDArchivo`, `DireccionArchivo`, `DataArchivo`, `NombreArchivo`, `IDRepositorie`, `IDCommit` FROM `Archivo` ORDER BY `IDArchivo` DESC;";
             return await ReadAllAsync(await cmd.ExecuteReaderAsync());
         }
 

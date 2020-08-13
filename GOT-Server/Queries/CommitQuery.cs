@@ -36,7 +36,7 @@ namespace GOT_Server.Queries
         public async Task<List<Commited>> LatestPostsAsync()
         {
             using var cmd = Db.Connection.CreateCommand();
-            cmd.CommandText = @"SELECT `IDCommit`, `MessageCommit`, `DateCommit` FROM `Commited` ORDER BY `IDCommit` DESC LIMIT 10;";
+            cmd.CommandText = @"SELECT `IDCommit`, `MessageCommit`, `DateCommit` FROM `Commited` ORDER BY `IDCommit` DESC;";
             return await ReadAllAsync(await cmd.ExecuteReaderAsync());
         }
 
